@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -28,6 +27,11 @@ public class Enemy : MonoBehaviour
         if (other.tag == "Player")
         {
             Destroy(this.gameObject);
+            Player player = other.GetComponent<Player>();
+            if (player != null)
+            {
+                player.Damage();
+            }
         } 
         if (other.tag == "Laser")
         {
