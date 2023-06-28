@@ -1,15 +1,17 @@
 using UnityEngine;
-
+using System.Collections;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _speed = 4f;
-    private float inputHorizontal;
-    private float inputVertical;
+    private float _inputHorizontal;
+    private float _inputVertical;
     [SerializeField] private GameObject _laserPrefab;
     [SerializeField] private float _fireRate = 0.15f;
     private float _canFire = -1f;
     [SerializeField] private int _lives = 3;
     private SpawnManager _spawnManager;
+    [SerializeField] private GameObject _tripleShotPrefab;
+    [SerializeField] private bool _isTripleShotActive = false;
     
     // Start is called before the first frame update
     void Start()
@@ -35,15 +37,15 @@ public class Player : MonoBehaviour
 
     void CalculateMovement()
     {
-        inputHorizontal = Input.GetAxis("Horizontal");
-        inputVertical = Input.GetAxis("Vertical");
-        Vector3 direction = new Vector3(inputHorizontal, inputVertical, 0);
+        _inputHorizontal = Input.GetAxis("Horizontal");
+        _inputVertical = Input.GetAxis("Vertical");
+        Vector3 direction = new Vector3(_inputHorizontal, _inputVertical, 0);
         transform.Translate(direction * _speed * Time.deltaTime);
         
         //limit movement when exceeding the top and bottom of screen
         transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y,-5f, 5f) ,0);
         
-        //player appears on the other side when exceeding the left and right of the scren
+        //player appears on the other side when exceeding the left and right of the screen
         if (transform.position.x > 9.3f)
         {
             transform.position = new Vector3(-9.3f, transform.position.y, 0);
@@ -55,7 +57,15 @@ public class Player : MonoBehaviour
 
     void Fire()
     {
-        Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+        if (_isTripleShotActive == true)
+        {
+            Instantiate(_tripleShotPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+        }
+        
     }
 
     public void Damage()
@@ -63,8 +73,22 @@ public class Player : MonoBehaviour
         _lives --;
         if (_lives < 1)
         {
-            Destroy(this.gameObject);
             _spawnManager.OnPlayerDeath();
+            Destroy(this.gameObject);
         }
     }
+
+    public void ActivateTripleShot()
+    {
+        _isTripleShotActive = true;
+        StartCoroutine(TripleShotPowerDownRoutine());
+    }
+    
+    IEnumerator TripleShotPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isTripleShotActive = false;
+    }
+    
+    
 }

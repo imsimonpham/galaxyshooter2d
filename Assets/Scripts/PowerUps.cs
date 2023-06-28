@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class PowerUps : MonoBehaviour
 {
     [SerializeField] private float _speed = 3f;
 
@@ -8,11 +8,9 @@ public class Enemy : MonoBehaviour
     void Update()
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
-        
         if (transform.position.y < -5f)
         {
-            float randomX = Random.Range(-9.3f, 9.3f);
-            transform.position = new Vector3(randomX, 6f, 0);
+            Destroy(this.gameObject);
         }
     }
 
@@ -23,13 +21,8 @@ public class Enemy : MonoBehaviour
             Player player = other.GetComponent<Player>();
             if (player != null)
             {
-                player.Damage();
+                player.ActivateTripleShot();
             }
-            Destroy(this.gameObject);
-        } 
-        if (other.tag == "Laser")
-        {
-            Destroy(other.gameObject);
             Destroy(this.gameObject);
         }
     }
