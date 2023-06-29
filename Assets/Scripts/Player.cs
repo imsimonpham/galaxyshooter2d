@@ -81,7 +81,7 @@ public class Player : MonoBehaviour
     public void ActivateTripleShot()
     {
         _isTripleShotActive = true;
-        StartCoroutine(TripleShotPowerDownRoutine());
+       // StartCoroutine(TripleShotPowerDownRoutine());
     }
     
     IEnumerator TripleShotPowerDownRoutine()

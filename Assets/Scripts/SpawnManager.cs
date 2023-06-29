@@ -13,7 +13,7 @@ public class SpawnManager : MonoBehaviour
     void Start()
     {
         StartCoroutine(SpawnEnemyRoutine());
-        StartCoroutine(SpawnPowerUpRoutine());
+        //StartCoroutine(SpawnPowerUpRoutine());
     }
     
     IEnumerator SpawnEnemyRoutine()
@@ -30,9 +30,9 @@ public class SpawnManager : MonoBehaviour
     {
         while (_stopSpawning == false)
         {
+            yield return new WaitForSeconds(10f);
             Vector3 posToSpawn = new Vector3(Random.Range(-9.3f, 9.3f), 6f, 0);
             Instantiate(_tripleShotPrefab, posToSpawn, Quaternion.identity);
-            yield return new WaitForSeconds(5f);
         }
     }
 
