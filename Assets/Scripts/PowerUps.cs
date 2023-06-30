@@ -3,6 +3,7 @@ using UnityEngine;
 public class PowerUps : MonoBehaviour
 {
     [SerializeField] private float _speed = 3f;
+    [SerializeField] private int _powerUpId;
 
     // Update is called once per frame
     void Update()
@@ -21,7 +22,13 @@ public class PowerUps : MonoBehaviour
             Player player = other.GetComponent<Player>();
             if (player != null)
             {
-                player.ActivateTripleShot();
+                if (_powerUpId == 0)
+                {
+                    player.ActivateTripleShot();
+                } else if (_powerUpId == 1)
+                {
+                    player.ActivateSpeedBoost();
+                }
             }
             Destroy(this.gameObject);
         }
