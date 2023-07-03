@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
+
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _speed = 4f;
@@ -42,6 +44,8 @@ public class Player : MonoBehaviour
             _canFire = Time.time + _fireRate;
             Fire();
         }
+
+        
     }
 
     void CalculateMovement()
@@ -94,7 +98,6 @@ public class Player : MonoBehaviour
         {
             _spawnManager.OnPlayerDeath();
             Destroy(this.gameObject);
-            _uiManager.DisplayGameOverText();
         }
     }
 
