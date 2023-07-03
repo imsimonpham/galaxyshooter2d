@@ -1,23 +1,29 @@
 using UnityEngine;
 using System.Collections;
-using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField] private float _speed = 4f;
-    private float _inputHorizontal;
-    private float _inputVertical;
-    [SerializeField] private GameObject _laserPrefab;
+    [SerializeField] private float _speed = 5f;
     [SerializeField] private float _fireRate = 0.15f;
     private float _canFire = -1f;
-    [SerializeField] private int _lives = 3;
-    private SpawnManager _spawnManager;
+    
+    private float _inputHorizontal, _inputVertical;
+    
+    [SerializeField] private GameObject _laserPrefab;
     [SerializeField] private GameObject _tripleShotPrefab;
+    [SerializeField] private GameObject _shield;
+    
+    [SerializeField] private int _lives = 3;
+    [SerializeField] private int _score;
+    
+    private SpawnManager _spawnManager;
+    private UIManager _uiManager;
+   
     [SerializeField] private bool _isTripleShotActive = false;
     [SerializeField] private bool _isShieldActive = false;
-    [SerializeField] private GameObject _shield;
-    [SerializeField] private int _score;
-    private UIManager _uiManager;
+    
+    [SerializeField] private GameObject _leftEngine, _rightEngine;
+   
     // Start is called before the first frame update
     void Start()
     {
@@ -44,8 +50,6 @@ public class Player : MonoBehaviour
             _canFire = Time.time + _fireRate;
             Fire();
         }
-
-        
     }
 
     void CalculateMovement()
@@ -78,7 +82,6 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
         }
-        
     }
 
     public void Damage()
@@ -93,8 +96,14 @@ public class Player : MonoBehaviour
         _lives --;
         
         _uiManager.UpdateLives(_lives);
-        
-        if (_lives < 1)
+
+        if (_lives == 2)
+        {
+            _leftEngine.SetActive(true);
+        } else if (_lives == 1)
+        {
+            _rightEngine.SetActive(true);
+        } else if (_lives == 0)
         {
             _spawnManager.OnPlayerDeath();
             Destroy(this.gameObject);
@@ -136,10 +145,4 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5.0f);
         _speed = 4.0f;
     }
-
-    
-
-    
-    
-    
 }

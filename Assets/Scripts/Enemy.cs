@@ -4,12 +4,24 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed = 3f;
     private Player _player;
+    private Animator _enemyExplosionAnim;
+    private BoxCollider2D _enemyCollider;
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
         if (_player == null)
         {
             Debug.LogError("Player is null");
+        }
+        _enemyExplosionAnim =  GetComponent<Animator>();
+        if (_enemyExplosionAnim == null)
+        {
+            Debug.LogError("Enemy explosion animator is null");
+        }
+        _enemyCollider = GetComponent<BoxCollider2D>();
+        if (_enemyCollider == null)
+        {
+            Debug.LogError("Enemy Box Collider is null");
         }
     }
     // Update is called once per frame
@@ -32,13 +44,19 @@ public class Enemy : MonoBehaviour
             {
                 _player.Damage();
             }
-            Destroy(this.gameObject);
+            _enemyExplosionAnim.SetTrigger("OnEnemyDeath");
+            _speed = 0;
+            Destroy(_enemyCollider);
+            Destroy(this.gameObject, 2.3f);
         } 
         if (other.tag == "Laser")
         {
             Destroy(other.gameObject);
             _player.CalculateScore(10);
-            Destroy(this.gameObject);
+            _enemyExplosionAnim.SetTrigger("OnEnemyDeath");
+            _speed = 0;
+            Destroy(_enemyCollider);
+            Destroy(this.gameObject, 2.3f);
         }
     }
 }

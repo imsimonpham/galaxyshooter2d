@@ -11,12 +11,18 @@ public class SpawnManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        
+    }
+
+    public void StartSpawning()
+    {
         StartCoroutine(SpawnEnemyRoutine());
         StartCoroutine(SpawnPowerUpRoutine());
     }
     
     IEnumerator SpawnEnemyRoutine()
     {
+        yield return new WaitForSeconds(2.5f);
         while (_stopSpawning == false)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-9.3f,9.3f), 6f, 0);
@@ -29,7 +35,7 @@ public class SpawnManager : MonoBehaviour
     {
         while (_stopSpawning == false)
         {
-            yield return new WaitForSeconds(10f);
+            yield return new WaitForSeconds(15f);
             Vector3 posToSpawn = new Vector3(Random.Range(-9.3f, 9.3f), 6f, 0);
             int randomIndex = Random.Range(0, 3);
             Instantiate(_powerUps[randomIndex], posToSpawn, Quaternion.identity);
