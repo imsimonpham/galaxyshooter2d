@@ -23,6 +23,9 @@ public class Player : MonoBehaviour
     [SerializeField] private bool _isShieldActive = false;
     
     [SerializeField] private GameObject _leftEngine, _rightEngine;
+
+    [SerializeField] private AudioClip _laserSound;
+    [SerializeField] private AudioSource _audioSource;
    
     // Start is called before the first frame update
     void Start()
@@ -38,6 +41,16 @@ public class Player : MonoBehaviour
         if (_uiManager == null)
         {
             Debug.LogError("UI Manger is NULL");
+        }
+
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+        {
+            Debug.LogError("Audio Source on the Player is null");
+        }
+        else
+        {
+            _audioSource.clip = _laserSound; 
         }
     }
 
@@ -82,6 +95,8 @@ public class Player : MonoBehaviour
         {
             Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
         }
+
+        _audioSource.Play();
     }
 
     public void Damage()

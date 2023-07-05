@@ -6,6 +6,8 @@ public class Enemy : MonoBehaviour
     private Player _player;
     private Animator _enemyExplosionAnim;
     private BoxCollider2D _enemyCollider;
+   
+    [SerializeField] private AudioSource _audioSource;
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -22,6 +24,11 @@ public class Enemy : MonoBehaviour
         if (_enemyCollider == null)
         {
             Debug.LogError("Enemy Box Collider is null");
+        }
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
+        {
+            Debug.LogError("Audio source on the enemy is null");
         }
     }
     // Update is called once per frame
@@ -45,6 +52,7 @@ public class Enemy : MonoBehaviour
                 _player.Damage();
             }
             _enemyExplosionAnim.SetTrigger("OnEnemyDeath");
+            _audioSource.Play();
             _speed = 0;
             Destroy(_enemyCollider);
             Destroy(this.gameObject, 2.3f);
@@ -54,6 +62,7 @@ public class Enemy : MonoBehaviour
             Destroy(other.gameObject);
             _player.CalculateScore(10);
             _enemyExplosionAnim.SetTrigger("OnEnemyDeath");
+            _audioSource.Play();
             _speed = 0;
             Destroy(_enemyCollider);
             Destroy(this.gameObject, 2.3f);

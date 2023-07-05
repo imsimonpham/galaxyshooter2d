@@ -5,7 +5,7 @@ public class Asteroid : MonoBehaviour
 {
     [SerializeField] private float _rotateSpeed = 20f;
     [SerializeField] private GameObject _explosionPrefab;
-    [SerializeField ]private SpawnManager _spawnManager;
+    [SerializeField] private SpawnManager _spawnManager;
 
     // Start is called before the first frame update
     void Start()
