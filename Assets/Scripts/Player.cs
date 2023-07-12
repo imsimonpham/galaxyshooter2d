@@ -18,7 +18,9 @@ public class Player : MonoBehaviour
     
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
-   
+    private BoxCollider2D _playerCollider;
+    
+        
     [SerializeField] private bool _isTripleShotActive = false;
     [SerializeField] private bool _isShieldActive = false;
     
@@ -26,7 +28,9 @@ public class Player : MonoBehaviour
 
     [SerializeField] private AudioClip _laserSound;
     [SerializeField] private AudioSource _audioSource;
-   
+
+    private Animator _playerExplosion;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,9 +52,18 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Audio Source on the Player is null");
         }
-        else
+        
+
+        _playerExplosion = GetComponent<Animator>();
+        if (_playerExplosion == null)
         {
-            _audioSource.clip = _laserSound; 
+            Debug.LogError("Player Explosion animator is null");
+        }
+
+        _playerCollider = GetComponent<BoxCollider2D>();
+        if (_playerCollider == null)
+        {
+            Debug.LogError("Player Collider == null");
         }
     }
 
@@ -85,7 +98,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    void Fire()
+    public void Fire()
     {
         if (_isTripleShotActive == true)
         {
@@ -96,7 +109,7 @@ public class Player : MonoBehaviour
             Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
         }
 
-        _audioSource.Play();
+        _audioSource.PlayOneShot(_laserSound);
     }
 
     public void Damage()
@@ -160,4 +173,5 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5.0f);
         _speed = 4.0f;
     }
+    
 }

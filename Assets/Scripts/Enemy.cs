@@ -1,13 +1,18 @@
 using UnityEngine;
 
+
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private float _speed = 3f;
+    [SerializeField] private float _speed = 1.5f;
+    [SerializeField] private float _fireRate = 3f;
+    [SerializeField] private GameObject _laserPrefab;
+    [SerializeField] private AudioSource _audioSource;
+
+    private float _canFire = -1f;
     private Player _player;
     private Animator _enemyExplosionAnim;
     private BoxCollider2D _enemyCollider;
    
-    [SerializeField] private AudioSource _audioSource;
     void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
@@ -34,6 +39,16 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        CalculateMovement();
+        if (Time.time > _canFire)
+        {
+            _fireRate = Random.Range(3f, 7f);
+            _canFire = Time.time + _fireRate;
+            Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+        }
+    }
+    private void CalculateMovement()
+    {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
         
         if (transform.position.y < -5f)
@@ -42,7 +57,6 @@ public class Enemy : MonoBehaviour
             transform.position = new Vector3(randomX, 6f, 0);
         }
     }
-
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.tag == "Player")
