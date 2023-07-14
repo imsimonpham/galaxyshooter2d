@@ -195,6 +195,23 @@ public class Player : MonoBehaviour
         _uiManager.UpdateAmmo(_ammoCount);
     }
 
+    public void AddExtraLife()
+    {
+        if (_lives < 3)
+        {
+            _lives++;
+            _uiManager.UpdateLives(_lives);
+            if (_lives == 3)
+            {
+                _leftEngine.SetActive(false);
+            }
+            else if (_lives == 2)
+            {
+                _rightEngine.SetActive(false);
+            } 
+        }
+    }
+
     public void ActivateTripleShot()
     {
         _isTripleShotActive = true;

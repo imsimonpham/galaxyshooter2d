@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private AudioSource _audioSource;
 
     private float _canFire = -1f;
+    private bool _isDead = false;
     private Player _player;
     private Animator _enemyExplosionAnim;
     private BoxCollider2D _enemyCollider;
@@ -42,10 +43,20 @@ public class Enemy : MonoBehaviour
         CalculateMovement();
         if (Time.time > _canFire)
         {
-            _fireRate = Random.Range(3f, 7f);
+            //_fireRate = Random.Range(3f, 7f);
+            _fireRate = 2f;
             _canFire = Time.time + _fireRate;
-            Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+            if (_isDead == false)
+            {
+                Fire();
+            }
+          
         }
+    }
+
+    private void Fire()
+    {
+        Instantiate(_laserPrefab, transform.position, Quaternion.identity);
     }
     private void CalculateMovement()
     {
@@ -68,6 +79,7 @@ public class Enemy : MonoBehaviour
             _enemyExplosionAnim.SetTrigger("OnEnemyDeath");
             _audioSource.Play();
             _speed = 0;
+            _isDead = true;
             Destroy(_enemyCollider);
             Destroy(this.gameObject, 2.3f);
         } 
@@ -78,8 +90,10 @@ public class Enemy : MonoBehaviour
             _enemyExplosionAnim.SetTrigger("OnEnemyDeath");
             _audioSource.Play();
             _speed = 0;
+            _isDead = true;
             Destroy(_enemyCollider);
             Destroy(this.gameObject, 2.3f);
+            
         }
     }
 }

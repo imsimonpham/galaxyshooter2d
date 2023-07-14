@@ -23,7 +23,6 @@ public class UIManager : MonoBehaviour
        {
            Debug.LogError("Game Manager is null");
        }
-
     }
 
     // Update is called once per frame
