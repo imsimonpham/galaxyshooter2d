@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 2753649205498558730}
   - component: {fileID: 2030232354731207712}
   - component: {fileID: 6390683010989738970}
+  - component: {fileID: 3925012503121320922}
   m_Layer: 0
   m_Name: AmmoPowerUp
   m_TagString: Untagged
@@ -184,3 +185,24 @@ MonoBehaviour:
   _speed: 3
   _powerUpId: 3
   _powerUpSound: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
+--- !u!95 &3925012503121320922
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8262736110973221994}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 6ef856e29fe47e14b8e88233b0a92171, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
