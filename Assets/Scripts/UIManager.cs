@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Sprite[] _liveSprites;
     [SerializeField] private TMP_Text _gameOverText;
     [SerializeField] private TMP_Text _restartText;
+    [SerializeField] private TMP_Text _ammoCountText;
     private GameManager _gameManager;
 
     // Start is called before the first frame update
@@ -29,6 +30,11 @@ public class UIManager : MonoBehaviour
     public void UpdateScore(int playerScore)
     { 
         _scoreText.text = "Score: " + playerScore;
+    }
+
+    public void UpdateAmmo(int playerAmmo)
+    {
+        _ammoCountText.text = "Ammo: " + playerAmmo;
     }
 
     public void UpdateLives(int _currentLives)

@@ -13,20 +13,24 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject _tripleShotPrefab;
     [SerializeField] private GameObject _shield;
     
-    [SerializeField] private int _lives = 3;
+    [SerializeField] private int _lives = 0;
+    [SerializeField] private int _shieldLives = 0;
     [SerializeField] private int _score;
-    
+    [SerializeField] private int _ammoCount = 15;
+
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
     private BoxCollider2D _playerCollider;
-    
+    private SpriteRenderer _shieldRenderer;
         
     [SerializeField] private bool _isTripleShotActive = false;
     [SerializeField] private bool _isShieldActive = false;
-    
+    [SerializeField] private bool _isOutOfAmmo = false;
+        
     [SerializeField] private GameObject _leftEngine, _rightEngine;
 
     [SerializeField] private AudioClip _laserSound;
+    [SerializeField] private AudioClip _outOfAmmoSound;
     [SerializeField] private AudioSource _audioSource;
 
     private Animator _playerExplosion;
@@ -53,7 +57,6 @@ public class Player : MonoBehaviour
             Debug.LogError("Audio Source on the Player is null");
         }
         
-
         _playerExplosion = GetComponent<Animator>();
         if (_playerExplosion == null)
         {
@@ -65,6 +68,12 @@ public class Player : MonoBehaviour
         {
             Debug.LogError("Player Collider == null");
         }
+
+        _shieldRenderer = _shield.GetComponent<SpriteRenderer>();
+        if (_shieldRenderer == null)
+        {
+         Debug.LogError("Shield Renderer is null");   
+        }
     }
 
     // Update is called once per frame
@@ -75,6 +84,16 @@ public class Player : MonoBehaviour
         {
             _canFire = Time.time + _fireRate;
             Fire();
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            _speed = 8.0f;
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            _speed = 5.0f;
         }
     }
 
@@ -100,27 +119,59 @@ public class Player : MonoBehaviour
 
     public void Fire()
     {
-        if (_isTripleShotActive == true)
+        if (_ammoCount > 0)
         {
-            Instantiate(_tripleShotPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+            if (_isTripleShotActive == true)
+            {
+                Instantiate(_tripleShotPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+            }
+            else
+            {
+                Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+            }
+            _ammoCount--;
+            _uiManager.UpdateAmmo(_ammoCount);
         }
         else
         {
-            Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+            _isOutOfAmmo = true;
         }
 
-        _audioSource.PlayOneShot(_laserSound);
+        if (_isOutOfAmmo == false)
+        {
+            _audioSource.PlayOneShot(_laserSound);
+        }
+        else
+        {
+            _audioSource.PlayOneShot(_outOfAmmoSound);
+        }
     }
 
     public void Damage()
     {
         if (_isShieldActive == true)
         {
-            _isShieldActive = false;
-            _shield.SetActive(false);
-            return;
+            if (_shieldLives == 3)
+            {
+                _shieldLives--;
+                _shieldRenderer.color = new Color(1f, 1f, 1f, 0.65f);
+                return;
+            }
+            else if (_shieldLives == 2)
+            {
+                _shieldLives--;
+                _shieldRenderer.color = new Color(1f, 1f, 1f, 0.30f);
+                return;
+            }
+            else if (_shieldLives == 1)
+            {
+                _shieldLives--;
+                _isShieldActive = false;
+                _shield.SetActive(false);
+                return;
+            }
         }
-       
+
         _lives --;
         
         _uiManager.UpdateLives(_lives);
@@ -136,6 +187,12 @@ public class Player : MonoBehaviour
             _spawnManager.OnPlayerDeath();
             Destroy(this.gameObject);
         }
+    }
+
+    public void RefillAmmo()
+    {
+        _ammoCount += 15;
+        _uiManager.UpdateAmmo(_ammoCount);
     }
 
     public void ActivateTripleShot()
@@ -159,9 +216,11 @@ public class Player : MonoBehaviour
     public void ActivateShield()
     {
         _shield.SetActive(true);
+        _shieldRenderer.color = new Color(1f,1f,1f,1f);
+        _shieldLives = 3;
         _isShieldActive = true;
     }
-    
+
     IEnumerator TripleShotPowerDownRoutine()
     {
         yield return new WaitForSeconds(5.0f);
