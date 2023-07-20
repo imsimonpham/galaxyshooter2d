@@ -43,20 +43,19 @@ public class Enemy : MonoBehaviour
         CalculateMovement();
         if (Time.time > _canFire)
         {
-            //_fireRate = Random.Range(3f, 7f);
-            _fireRate = 2f;
+            _fireRate = Random.Range(3f, 7f);
+            //_fireRate = 2f;
             _canFire = Time.time + _fireRate;
             if (_isDead == false)
             {
                 Fire();
             }
-          
         }
     }
 
     private void Fire()
     {
-        Instantiate(_laserPrefab, transform.position, Quaternion.identity);
+       Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
     }
     private void CalculateMovement()
     {

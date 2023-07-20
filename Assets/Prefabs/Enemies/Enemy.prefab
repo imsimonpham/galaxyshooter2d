@@ -31,11 +31,11 @@ Transform:
   m_GameObject: {fileID: 1555823481194572728}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.41, y: 0.47, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 0.3, y: 0.3, z: 0.3}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &8263331205587599365
 MonoBehaviour:
@@ -51,7 +51,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 1.5
   _fireRate: 3
-  _laserPrefab: {fileID: 2856051131035338208, guid: acea4cdd1b250ba49b6ce5e9f3e364fa, type: 3}
+  _laserPrefab: {fileID: 2135148631298049331, guid: 1fbbf6ffb592e1f49985b298cf87baf2, type: 3}
   _audioSource: {fileID: 0}
 --- !u!212 &1470406097843155958
 SpriteRenderer:
@@ -94,8 +94,8 @@ SpriteRenderer:
   m_SortingLayerID: -1760483351
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 3154912113cbb4a498df6f571c74e18c, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: f0e38c9d0143773499506936de3bdeee, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.78431374}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -168,7 +168,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 5.12, y: 5.12}
+    oldSize: {x: 4.32, y: 4.86}
     newSize: {x: 5.12, y: 5.12}
     adaptiveTilingThreshold: 0.5
     drawMode: 0

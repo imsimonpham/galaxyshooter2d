@@ -1,37 +1,52 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
+using Cinemachine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _fireRate = 0.15f;
+    private float _maxFuelAmount = 100f;
+    private float _fuelAmountBurntPerSec = 15f;
+    private float _fuelAmountRefilledPerSec = 20f;
     private float _canFire = -1f;
     
     private float _inputHorizontal, _inputVertical;
     
     [SerializeField] private GameObject _laserPrefab;
     [SerializeField] private GameObject _tripleShotPrefab;
+    [SerializeField] private GameObject _megaBlastPrefab;
     [SerializeField] private GameObject _shield;
-    
+    [SerializeField] private GameObject _thruster;
+
     [SerializeField] private int _lives = 0;
     [SerializeField] private int _shieldLives = 0;
     [SerializeField] private int _score;
-    [SerializeField] private int _ammoCount = 15;
+    [SerializeField] private int _ammoCount = 100;
 
     private SpawnManager _spawnManager;
     private UIManager _uiManager;
     private BoxCollider2D _playerCollider;
-    private SpriteRenderer _shieldRenderer;
-        
+    private ParticleSystem _shieldParticleSystem;
+    private CameraShakeManager _cameraShakeManager;
+    private CinemachineImpulseSource _impulseSource;
+
     [SerializeField] private bool _isTripleShotActive = false;
     [SerializeField] private bool _isShieldActive = false;
     [SerializeField] private bool _isOutOfAmmo = false;
-        
+    [SerializeField] private bool _isMegaBlastActive = false;
+    [SerializeField] private bool _isSpeedBoostActive = false; 
+
     [SerializeField] private GameObject _leftEngine, _rightEngine;
 
     [SerializeField] private AudioClip _laserSound;
     [SerializeField] private AudioClip _outOfAmmoSound;
+    [SerializeField] private AudioClip _playerExplosionSound;
     [SerializeField] private AudioSource _audioSource;
+    
+    [SerializeField] private Image _fuelBar;
+    
 
     private Animator _playerExplosion;
 
@@ -69,12 +84,24 @@ public class Player : MonoBehaviour
             Debug.LogError("Player Collider == null");
         }
 
-        _shieldRenderer = _shield.GetComponent<SpriteRenderer>();
-        if (_shieldRenderer == null)
+        _shieldParticleSystem = _shield.GetComponent<ParticleSystem>();
+        if (_shieldParticleSystem == null)
         {
-         Debug.LogError("Shield Renderer is null");   
+            Debug.LogError("Shield Particle System is null");   
         }
-    }
+
+        _cameraShakeManager = GameObject.Find("CameraShakeManager").GetComponent<CameraShakeManager>();
+        if (_cameraShakeManager == null)
+        {
+            Debug.LogError("Camera Shake Manager is null");
+        }
+        
+        _impulseSource = GetComponent<CinemachineImpulseSource>();
+        if (_impulseSource == null)
+        {
+            Debug.LogError("Impulse Source is null");
+        }
+    } 
 
     // Update is called once per frame
     void Update()
@@ -85,16 +112,8 @@ public class Player : MonoBehaviour
             _canFire = Time.time + _fireRate;
             Fire();
         }
-
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            _speed = 8.0f;
-        }
-
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            _speed = 5.0f;
-        }
+        AdjustFuelBarColor();
+        ActivateSpeedBoostOnFuel();
     }
 
     void CalculateMovement()
@@ -121,60 +140,39 @@ public class Player : MonoBehaviour
     {
         if (_ammoCount > 0)
         {
-            if (_isTripleShotActive == true)
+            if (_isMegaBlastActive)
             {
-                Instantiate(_tripleShotPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
+                Instantiate( _megaBlastPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
             }
-            else
+           else if (_isTripleShotActive)
+            {
+                Instantiate(_tripleShotPrefab, new Vector3(transform.position.x, transform.position.y, 0), Quaternion.identity);
+            }
+            else 
             {
                 Instantiate(_laserPrefab, new Vector3(transform.position.x, transform.position.y + 1f, 0), Quaternion.identity);
             }
             _ammoCount--;
             _uiManager.UpdateAmmo(_ammoCount);
-        }
-        else
-        {
-            _isOutOfAmmo = true;
-        }
-
-        if (_isOutOfAmmo == false)
-        {
             _audioSource.PlayOneShot(_laserSound);
         }
         else
         {
+            _isOutOfAmmo = true;
             _audioSource.PlayOneShot(_outOfAmmoSound);
         }
     }
-
     public void Damage()
     {
-        if (_isShieldActive == true)
+        if (_isShieldActive)
         {
-            if (_shieldLives == 3)
-            {
-                _shieldLives--;
-                _shieldRenderer.color = new Color(1f, 1f, 1f, 0.65f);
-                return;
-            }
-            else if (_shieldLives == 2)
-            {
-                _shieldLives--;
-                _shieldRenderer.color = new Color(1f, 1f, 1f, 0.30f);
-                return;
-            }
-            else if (_shieldLives == 1)
-            {
-                _shieldLives--;
-                _isShieldActive = false;
-                _shield.SetActive(false);
-                return;
-            }
+            ShieldDamage();
+            return;
         }
-
-        _lives --;
         
+        _lives --;
         _uiManager.UpdateLives(_lives);
+        _cameraShakeManager.CameraShake(_impulseSource);
 
         if (_lives == 2)
         {
@@ -185,14 +183,50 @@ public class Player : MonoBehaviour
         } else if (_lives == 0)
         {
             _spawnManager.OnPlayerDeath();
-            Destroy(this.gameObject);
+            _playerExplosion.SetTrigger("OnPlayerDeath");
+            _audioSource.PlayOneShot(_playerExplosionSound);
+            Destroy(_playerCollider);
+            foreach(Transform child in transform)
+            {
+                Destroy(child.gameObject);
+            }
+            Destroy(this.gameObject, 2.3f);
+        }
+    }
+    public void ShieldDamage()
+    {
+        if (_shieldLives == 3)
+        {
+            _shieldLives--;
+            ChangeShieldVisual(0.50f);
+            return;
+        }
+        else if (_shieldLives == 2)
+        {
+            _shieldLives--;
+            ChangeShieldVisual(0.20f);
+            return;
+        }
+        else if (_shieldLives == 1)
+        {
+            _shieldLives--;
+            _isShieldActive = false;
+            _shield.SetActive(false);
+            return;
         }
     }
 
     public void RefillAmmo()
     {
-        _ammoCount += 15;
+        _ammoCount += 50;
         _uiManager.UpdateAmmo(_ammoCount);
+    }
+    
+    public void ActivateMegaBlast()
+    {
+        _isTripleShotActive = false;
+        _isMegaBlastActive = true;
+        StartCoroutine(MegaBlastDownRoutine());
     }
 
     public void AddExtraLife()
@@ -212,8 +246,54 @@ public class Player : MonoBehaviour
         }
     }
 
+    void ActivateSpeedBoostOnFuel()
+    {
+        if (_isSpeedBoostActive == false && Input.GetKey(KeyCode.LeftShift))
+        {
+            if (_fuelBar.fillAmount > 0)
+            {
+                _speed = 8.0f;
+                _fuelBar.fillAmount -= _fuelAmountBurntPerSec/_maxFuelAmount * Time.deltaTime;
+                _thruster.transform.localScale = new Vector3 (1f, 1f, 1f);
+            }
+            else
+            {
+                if (_isSpeedBoostActive == false)
+                {
+                    _speed = 5.0f;
+                    _thruster.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
+                }
+            }
+        }
+        else
+        {
+            if (_isSpeedBoostActive == false)
+            {
+                _speed = 5.0f;
+                _thruster.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
+            }
+            _fuelBar.fillAmount += _fuelAmountRefilledPerSec/_maxFuelAmount * Time.deltaTime;
+        }
+    }
+
+    void AdjustFuelBarColor()
+    {
+        if (_fuelBar.fillAmount > 0.5 && _fuelBar.fillAmount <= 1)
+        {
+            _fuelBar.color = new Color32(219, 145, 55, 255);
+        } else if (_fuelBar.fillAmount > 0.2 && _fuelBar.fillAmount <= 0.5)
+        {
+            _fuelBar.color = new Color32(215, 95, 30, 255);
+        }
+        else
+        {
+            _fuelBar.color = new Color32(215, 31, 38, 255);
+        }
+    } 
+
     public void ActivateTripleShot()
     {
+        _isMegaBlastActive = false; 
         _isTripleShotActive = true;
        StartCoroutine(TripleShotPowerDownRoutine());
     }
@@ -221,6 +301,8 @@ public class Player : MonoBehaviour
     public void ActivateSpeedBoost()
     {
         _speed = 8.0f;
+        _isSpeedBoostActive = true;
+        _thruster.transform.localScale = new Vector3 (1f, 1f, 1f);
         StartCoroutine(SpeedBoostDownRoutine());
     }
 
@@ -233,9 +315,15 @@ public class Player : MonoBehaviour
     public void ActivateShield()
     {
         _shield.SetActive(true);
-        _shieldRenderer.color = new Color(1f,1f,1f,1f);
+        ChangeShieldVisual(1f);
         _shieldLives = 3;
         _isShieldActive = true;
+    }
+
+    void ChangeShieldVisual(float opacity)
+    {
+        var main = _shieldParticleSystem.main;
+        main.startColor = new Color(1f,1f,1f,opacity);
     }
 
     IEnumerator TripleShotPowerDownRoutine()
@@ -247,7 +335,15 @@ public class Player : MonoBehaviour
     IEnumerator SpeedBoostDownRoutine()
     {
         yield return new WaitForSeconds(5.0f);
-        _speed = 4.0f;
+        _isSpeedBoostActive = false;
+        _thruster.transform.localScale = new Vector3 (0.5f, 0.5f, 0.5f);
+        _speed = 5.0f;
+    }
+
+    IEnumerator MegaBlastDownRoutine()
+    {
+        yield return new WaitForSeconds(5.0f);
+        _isMegaBlastActive = false;
     }
     
 }

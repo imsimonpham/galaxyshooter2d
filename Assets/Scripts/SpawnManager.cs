@@ -22,9 +22,9 @@ public class SpawnManager : MonoBehaviour
     
     IEnumerator SpawnEnemyRoutine()
     {
-        yield return new WaitForSeconds(2.5f);
         while (_stopSpawning == false)
         {
+            yield return new WaitForSeconds(2.5f);
             Vector3 posToSpawn = new Vector3(Random.Range(-9.3f,9.3f), 6f, 0);
             GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
             newEnemy.transform.parent = _enemyContainer.transform;
@@ -35,9 +35,9 @@ public class SpawnManager : MonoBehaviour
     {
         while (_stopSpawning == false)
         {
-            yield return new WaitForSeconds(15f);
+            yield return new WaitForSeconds(10f);
             Vector3 posToSpawn = new Vector3(Random.Range(-9.3f, 9.3f), 6f, 0);
-            int randomIndex = Random.Range(0, 3);
+            int randomIndex = Random.Range(0, 6);
             Instantiate(_powerUps[randomIndex], posToSpawn, Quaternion.identity);
         }
     }

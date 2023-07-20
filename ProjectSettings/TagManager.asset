@@ -8,6 +8,7 @@ TagManager:
   - Enemy
   - EnemyLaser
   - Shield
+  - EnergyBall
   layers:
   - Default
   - TransparentFX

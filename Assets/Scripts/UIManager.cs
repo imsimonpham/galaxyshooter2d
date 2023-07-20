@@ -36,10 +36,11 @@ public class UIManager : MonoBehaviour
         _ammoCountText.text = "Ammo: " + playerAmmo;
     }
 
-    public void UpdateLives(int _currentLives)
+   public void UpdateLives(int _currentLives)
     {
-       _livesImg.sprite = _liveSprites[_currentLives];
-       if (_currentLives == 0)
+        _livesImg.sprite = _liveSprites[_currentLives];
+        
+        if (_currentLives == 0)
        {
            DisplayGameOverText();
            DisplayRestartText();

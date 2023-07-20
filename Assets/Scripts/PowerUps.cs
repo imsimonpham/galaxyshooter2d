@@ -42,6 +42,9 @@ public class PowerUps : MonoBehaviour
                     case 4:
                         player.AddExtraLife();
                         break;
+                    case 5:
+                        player.ActivateMegaBlast();
+                        break;
                     default: 
                         Debug.Log("Default");
                         break;
