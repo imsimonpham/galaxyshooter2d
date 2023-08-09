@@ -25,9 +25,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float _fireRate = 3f;
     [SerializeField] private float _fastFireRate = 0.7f;
     private float _canFire = -1f;
-    [SerializeField] private float _spawnRate = 2f;
+    private float _spawnRate = 2f;
     private float _canSpawn = -1f;
-    private float _dmgPerShot;
 
     // State and Flags
     [SerializeField] private bool _isDead = false;
@@ -59,7 +58,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private LayerMask _playerLaserLayerMask;
     private GameObject _enemyContainer;
     private GameObject _bossPrefab;
-    private SpriteRenderer _bossSpriteRenderer; 
     private SpawnManager  _spawnManager;
     private UIManager _uiManager;
     private GameManager _gameManager;
@@ -84,12 +82,15 @@ public class Enemy : MonoBehaviour
         {
             Debug.LogError("Enemy explosion animator is null");
         }
-        /*_enemyCollider = GetComponent<BoxCollider2D>();
-        
-        if (_enemyCollider == null)
+
+        if(transform.name != "Boss(Clone)")
         {
-            Debug.LogError("Enemy Box Collider is null");
-        }*/
+            _enemyCollider = GetComponent<BoxCollider2D>();
+            if (_enemyCollider == null)
+            {
+                Debug.LogError("Enemy Box Collider is null");
+            }
+        }
 
         _spawnManager = GameObject.FindGameObjectWithTag("SpawnManager").GetComponent<SpawnManager>();
 
@@ -279,7 +280,6 @@ public class Enemy : MonoBehaviour
 
     public float GetBossMaxHealth()
     {
-        Debug.Log(_bossMaxHealth);
         return _bossMaxHealth;
     }
 
@@ -447,7 +447,6 @@ public class Enemy : MonoBehaviour
                     Destroy(child.gameObject, 2.3f);
                     _audioSource.Play();
                     _speed = 0;
-                    Debug.Log("Boss Died");
                 }
                 Destroy(_enemyCollider);
                 Destroy(this.gameObject, 2.3f);

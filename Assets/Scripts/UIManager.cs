@@ -58,8 +58,6 @@ public class UIManager : MonoBehaviour
     public void BossHealthBarUIUpdate()
     {
         _bossHealthBar.fillAmount -= 1f / _bossMaxHealth;
-        Debug.Log("fill amount: " + _bossHealthBar.fillAmount);
-        Debug.Log("Dmg per shot: " + 1f / _bossMaxHealth);
     }
 
     public void ShowBossHealthBar()

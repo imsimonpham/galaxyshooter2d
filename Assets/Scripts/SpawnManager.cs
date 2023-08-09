@@ -33,7 +33,7 @@ public class SpawnManager : MonoBehaviour
     private Mine _mine;
 
     // State and Flags
-    private int[] _enemiesPerWaveArray = new int[] { 0, 0, 2};
+    private int[] _enemiesPerWaveArray = new int[] { 5, 8, 10};
     private int _totalWaves = 3;
     private bool _stopSpawning = false;
 
