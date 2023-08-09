@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PowerUps : MonoBehaviour
 {
-    [SerializeField] private float _speed = 3f;
+    [SerializeField] private float _speed = 1.5f;
     [SerializeField] private int _powerUpId;
     [SerializeField] private AudioClip _powerUpSound;
     
@@ -13,13 +13,12 @@ public class PowerUps : MonoBehaviour
         if (transform.position.y < -5f)
         {
             Destroy(this.gameObject);
-        }
-        
+        } 
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
         {
             Player player = other.GetComponent<Player>();
             AudioSource.PlayClipAtPoint(_powerUpSound, transform.position);
@@ -44,6 +43,12 @@ public class PowerUps : MonoBehaviour
                         break;
                     case 5:
                         player.ActivateMegaBlast();
+                        break;
+                    case 6:
+                        player.DisableFiring();
+                        break;
+                    case 7:
+                        player.ActivateHomingProjectile();
                         break;
                     default: 
                         Debug.Log("Default");

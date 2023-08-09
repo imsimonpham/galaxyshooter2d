@@ -4,14 +4,13 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [SerializeField] private bool _isGameOver = false;
-
-    // Update is called once per frame
+    [SerializeField] private bool _playerWin = false;
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R) && _isGameOver == true)
+        if (Input.GetKeyDown(KeyCode.R) && _isGameOver == true || Input.GetKeyDown(KeyCode.R) && _playerWin == true)
         {
             SceneManager.LoadScene("Game");
-        }
+        } 
         
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -22,5 +21,10 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         _isGameOver = true;
+    }
+    
+    public void PlayerWin()
+    {
+        _playerWin = true;
     }
 }

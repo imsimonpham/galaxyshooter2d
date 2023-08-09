@@ -9,16 +9,19 @@ TagManager:
   - EnemyLaser
   - Shield
   - EnergyBall
+  - PowerUp
+  - NegativePowerUp
+  - SpawnManager
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - PowerUp
   - Water
   - UI
   - Post Processing
-  - 
-  - 
+  - PlayerLaser
+  - Enemy
   - 
   - 
   - 

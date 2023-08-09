@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 1095028730691374027}
   - component: {fileID: 5995430180977019360}
   - component: {fileID: 7836812871663512015}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: LifePowerUp
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -37,7 +37,7 @@ Transform:
   - {fileID: 2575606705568438909}
   - {fileID: 742459824360905780}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!198 &441437428986059720
 ParticleSystem:
@@ -4929,7 +4929,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0083e1383314b4a4990227124fbf9543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 3
+  _speed: 1.5
   _powerUpId: 4
   _powerUpSound: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!1 &2436350282259885241

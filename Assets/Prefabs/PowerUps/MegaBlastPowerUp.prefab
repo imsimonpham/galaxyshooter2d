@@ -14,9 +14,9 @@ GameObject:
   - component: {fileID: 7592429913177206072}
   - component: {fileID: 3673926652113026927}
   - component: {fileID: -6066770097065466469}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: MegaBlastPowerUp
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4929,7 +4929,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0083e1383314b4a4990227124fbf9543, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 3
+  _speed: 1.5
   _powerUpId: 5
   _powerUpSound: {fileID: 8300000, guid: 5ee343246919d2b4bba63ae629e95494, type: 3}
 --- !u!1 &3278521551511553819
